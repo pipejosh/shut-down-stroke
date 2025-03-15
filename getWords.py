@@ -1,10 +1,30 @@
 from meta_ai_api import MetaAI
+import random
 
 def getParragraph():
-    ai = MetaAI()
-    response = ai.prompt(message='Generate a single paragraph for a typing game. The paragraph should be diverse in topic and contain a variety of ideas, such as a mix of nature, technology, and human experience. The language should be descriptive but not too complex, and the text to be typed should be placed inside quotes.')
 
+    randomNumber = random.randint(0, 9)
+    ai = MetaAI()
+    topics = [
+        "Global history",
+        "Technology advancements",
+        "The future of entertainment",
+        "Space exploration",
+        "Environmental issues",
+        "Psychology and human behavior",
+        "The future of artificial intelligence",
+        "Global economy and trade",
+        "The future of transportation",
+        "Medical discoveries and healthcare",
+        "Cultural diversity and anthropology",
+        "The future of education",
+        "Moral and ethical dilemmas",
+    ]
+
+    response = ai.prompt(message=f"Write a paragraph about {topics[randomNumber]}. Please enclose the paragraph in quotes. Respond with the text in quotes only.")
+    
     return response['message']
+
 
 def filteresResponse():
 
