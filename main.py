@@ -1,43 +1,24 @@
-import tkinter as tk
 import getWords as words
+import tkinter as tk
 import platform
+import serial
+import time
 import os
+
+arduino = serial.Serial("COM8", 9600)  
+
+time.sleep(2)  
 
 frame = tk.Tk()
 entry = tk.Entry(frame)
 
 operativeSystem = platform.system()
-
 wordBank = words.getWords()
 inputBox = None
 historyLabel = None
 livesLeftLabel = None
-
 wordsCounter = 0
 livesLeft = 3
-
-def initFrame():
-    global inputBox, historyLabel, wordsCounter, livesLeftLabel, livesLeft
-    frame.title("Typing Game")
-    frame.geometry("500x500")
-
-    livesLeftLabel = tk.Label(frame, text=f"Lives Left: {livesLeft}", font=("Arial", 14))
-    livesLeftLabel.place(x=15, y=20, anchor="nw") 
-    livesLeftLabel.pad = 10
-
-    label = tk.Label(frame, text="Welcome to the Typing Game!", font=("Arial", 24))
-    label.pack(pady=20)
-
-    inputBox = tk.Label(frame, text="", font=("Arial", 16))
-    inputBox.pack(pady=30)
-
-    historyLabel = tk.Label(frame, text="Current Word:", font=("Arial", 20))
-    historyLabel.pack(pady=30)
-    historyLabel.config(text=wordBank[wordsCounter])
-
-    initInput()
-
-    frame.mainloop()
 
 def onSpace(event):
     global wordsCounter
@@ -45,38 +26,43 @@ def onSpace(event):
     if hasWon():
         return
 
-    userWord = entry.get()
+    userWord = entry.get().strip()
 
-    if checkWord(userWord.strip()):
+    if checkWord(userWord):
         inputBox.config(text=f'Submitted: {userWord}', foreground='green')
-        entry.delete(0, tk.END)
     else:
         inputBox.config(text=f'Submitted: {userWord} WRONG', foreground='red')
-        entry.delete(0, tk.END)
+        loseLife()
+
+    entry.delete(0, tk.END)
 
     if wordsCounter + 1 < len(wordBank):
         historyLabel.config(text=wordBank[wordsCounter + 1])
 
     wordsCounter += 1
-    print(wordsCounter)
 
+def initFrame():
+    global inputBox, historyLabel, livesLeftLabel
+    frame.title("Typing Game")
+    frame.geometry("500x500")
 
-def inLose():
-    global operativeSystem
+    livesLeftLabel = tk.Label(frame, text=f"Lives Left: {livesLeft}", font=("Arial", 14))
+    livesLeftLabel.pack(pady=10)
 
-    match operativeSystem:
+    label = tk.Label(frame, text="Welcome to the Typing Game!", font=("Arial", 24))
+    label.pack(pady=20)
 
-        case "Darwin":
-            # os.system('shutdown -h now') #shuts down mac
-            print('turn off mac')
+    inputBox = tk.Label(frame, text="", font=("Arial", 16))
+    inputBox.pack(pady=20)
 
-        case "Windows":
-            # os.system('cmd /k "shutdown /s /t 2"') # shuts down windows
-            print('turn off windows')
+    historyLabel = tk.Label(frame, text="Current Word:", font=("Arial", 20))
+    historyLabel.pack(pady=20)
+    historyLabel.config(text=wordBank[wordsCounter])
 
-        case "Linux":
-            # os.system('shutdown -h now') #shuts down linux
-            print('turn off linux')
+    # Input Box
+    initInput()
+
+    frame.mainloop()
 
 def initInput():
     entry.pack(pady=10)
@@ -85,32 +71,45 @@ def initInput():
 
 def hasWon():
     global wordsCounter
-
     if wordsCounter >= len(wordBank):
         print("You have won!")
         return True
-
     return False
 
 def checkWord(userWord):
-    global wordsCounter, livesLeft
+    return userWord == wordBank[wordsCounter]
 
-    if livesLeft == 0:
-        print("You have lost!")
-        frame.destroy()
-        inLose()
-        return False
+def loseLife():
+    global livesLeft
 
-    if userWord == wordBank[wordsCounter]:
-        return True
-    else:
+    if livesLeft > 0:
         livesLeft -= 1
         setLivesLeft()
-        return False
+
+        arduino.write(b'L')  
+        time.sleep(0.5)
+
+    if livesLeft == 0:
+        arduino.close()
+        shutdown()
 
 def setLivesLeft():
-    global livesLeftLabel, livesLeft
+    global livesLeftLabel
     livesLeftLabel.config(text=f"Lives Left: {livesLeft}")
+
+def shutdown():
+    global operativeSystem
+    print("Game Over! Shutting down...")
+
+    match operativeSystem:
+        case "Windows":
+            os.system("shutdown /s /t 1")
+        case "Darwin":
+            os.system("shutdown -h now")
+        case "Linux":
+            os.system("shutdown -h now")
+
+    frame.destory()
 
 def main():
     print(wordBank)
