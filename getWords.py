@@ -2,7 +2,7 @@ from meta_ai_api import MetaAI
 
 def getParragraph():
     ai = MetaAI()
-    response = ai.prompt(message='give me a parragraph of words for a typing game')
+    response = ai.prompt(message='give me a parragraph of words for a typing game, every time change the topic of the parragraph')
 
     return response['message']
 
@@ -25,6 +25,7 @@ def filteresResponse():
     return responseFilteres
 
 def getWords():
+
     filteredWords = filteresResponse()
     words = filteredWords.split();
     return words

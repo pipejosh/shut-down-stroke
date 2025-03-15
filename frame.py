@@ -1,37 +1,85 @@
 import tkinter as tk
-import getWords as words
+import getWords as words 
 
 entry = tk.Entry()
 frame = tk.Tk()
 
-wordBank = words.getWords()
+wordBank = words.getWords() 
 inputBox = None
+historyLabel = None 
+wordsCounter = 0    
+
+def onSpace(event):
+
+    if hasWon():
+        return
+
+    global wordsCounter
+    currentWord = ""
 
 
-def on_space(event):
-    word = entry.get()  # Get text from input field
-    if word.strip():  # Only submit if it's not empty
-        inputBox.config(text=f"Submitted: {word}")  # Update label with submitted word
-        entry.delete(0, tk.END)  # Clear input field
 
+    userWord = entry.get()
+    if userWord.strip():  # If word is not empty
+        inputBox.config(text=f"Submitted: {userWord}")  # Update label with submitted word
+        entry.delete(0, tk.END)  # Clear the entry field
+
+    checkWord(userWord.strip())
+
+    historyLabel.config(text=wordBank[wordsCounter + 1]) 
+    wordsCounter += 1
+    print(wordsCounter)
+    
+
+# Initialize the main frame
 def initFrame():
+    global inputBox, historyLabel
     frame.title("My Frame")
     frame.geometry("500x500")
 
+    # Create and pack the label that initially displays "Hello World"
     label = tk.Label(frame, text="Hello World", font=("Arial", 24))
     label.pack()
 
-    # Create a label to display the submitted word
+    # Create a label that will display the submitted word
     inputBox = tk.Label(frame, text="", font=("Arial", 16))
     inputBox.pack(pady=20)
 
+    # Create a label to display the history of submitted words
+    historyLabel = tk.Label(frame, text="Submitted Words History:", font=("Arial", 14))
+    historyLabel.pack(pady=10)
+
+    # Initialize input box (entry widget)
     initInput()
 
     frame.mainloop()
 
+# Function to set the label text for the word from the word bank
+def setLabelText(newText):
+    historyLabel.config(text=newText)
+
+# Initialize the entry widget and bind spacebar event
 def initInput():
     entry.pack()
-    entry.bind("<space>", on_space)  # Bind spacebar key to submit word
-    entry.focus_set()  # Focus on entry widget so user can type immediately
+    entry.bind("<space>", onSpace)  # Bind spacebar key to submit word
+    entry.focus_set()  # Set focus to entry field so user can type immediately
 
-initFrame()
+def hasWon():
+    global wordsCounter
+    if wordsCounter >= len(wordBank):
+        print("You have won!")
+        return True
+
+def checkWord(userWord):
+    print("IS CHECHING")
+    global wordsCounter
+
+    if userWord == wordBank[wordsCounter]:
+        print("Correct")
+    print("AFTER CHECHING")
+    print (wordBank[wordsCounter])
+
+def main():
+    print(wordBank)  # Print the word bank
+    initFrame()
+main()
