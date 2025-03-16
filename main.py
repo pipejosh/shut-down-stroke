@@ -119,7 +119,6 @@ def shutdown():
             os.system("shutdown -h now")
 
 def main():
-    print(wordBank)
     initFrame()
 
 if __name__ == "__main__":

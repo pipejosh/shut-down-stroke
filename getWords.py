@@ -3,7 +3,7 @@ import random
 
 def getParragraph():
 
-    randomNumber = random.randint(0, 9)
+    randomNumber = random.randint(0, 12)
     ai = MetaAI()
     topics = [
         "Global history",
