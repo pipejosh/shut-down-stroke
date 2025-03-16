@@ -5,7 +5,7 @@ import serial
 import time
 import os
 
-arduino = serial.Serial("COM8", 9600)  
+arduino = serial.Serial('COM8', 9600)  
 
 time.sleep(2)  
 
@@ -44,19 +44,19 @@ def onSpace(event):
 
 def initFrame():
     global inputBox, historyLabel, livesLeftLabel
-    frame.title("Typing Game")
-    frame.geometry("500x500")
+    frame.title('Shut Down Stoke')
+    frame.geometry('500x500')
 
-    livesLeftLabel = tk.Label(frame, text=f"Lives Left: {livesLeft}", font=("Arial", 14))
+    livesLeftLabel = tk.Label(frame, text=f'Lives Left: {livesLeft}', font=('Arial', 14))
     livesLeftLabel.pack(pady=10)
 
-    label = tk.Label(frame, text="Welcome to the Typing Game!", font=("Arial", 24))
+    label = tk.Label(frame, text='Welcome to Shut  down stoke!', font=('Arial', 24))
     label.pack(pady=20)
 
-    inputBox = tk.Label(frame, text="", font=("Arial", 16))
+    inputBox = tk.Label(frame, text='', font=('Arial', 16))
     inputBox.pack(pady=20)
 
-    historyLabel = tk.Label(frame, text="Current Word:", font=("Arial", 20))
+    historyLabel = tk.Label(frame, text='Current Word:', font=('Arial', 20))
     historyLabel.pack(pady=20)
     historyLabel.config(text=wordBank[wordsCounter])
 
@@ -67,7 +67,7 @@ def initFrame():
 
 def initInput():
     entry.pack(pady=10)
-    entry.bind("<space>", onSpace)
+    entry.bind('<space>', onSpace)
     entry.focus_set()
 
 def hasWon():
@@ -75,7 +75,7 @@ def hasWon():
     if wordsCounter >= len(wordBank):
 
         arduino.write(b'W')
-        setMainLabel("You have won!")
+        setMainLabel('You have won!')
 
         return True
     return False
@@ -103,23 +103,23 @@ def setMainLabel(newText):
 
 def setLivesLeft():
     global livesLeftLabel
-    livesLeftLabel.config(text=f"Lives Left: {livesLeft}")
+    livesLeftLabel.config(text=f'Lives Left: {livesLeft}')
 
 def shutdown():
     global operativeSystem
-    print("Game Over! Shutting down...")
+    print('Game Over! Shutting down...')
 
     match operativeSystem:
-        case "Windows":
-            os.system("shutdown /s /t 1")
-            print("Shutting down...")
-        case "Darwin":
-            os.system("shutdown -h now")
-        case "Linux":
-            os.system("shutdown -h now")
+        case 'Windows':
+            os.system('shutdown /s /t 1')
+            print('Shutting down...')
+        case 'Darwin':
+            os.system('shutdown -h now')
+        case 'Linux':
+            os.system('shutdown -h now')
 
 def main():
     initFrame()
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
